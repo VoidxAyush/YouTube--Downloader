@@ -15,7 +15,7 @@ HTML_TEMPLATE = '''
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            background-color: #030712; /* Deepest slate */
+            background-color: #030712; 
             background-image:
                 radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%),
                 radial-gradient(at 50% 0%, hsla(225,39%,30%,0.2) 0, transparent 50%),
@@ -25,7 +25,6 @@ HTML_TEMPLATE = '''
             font-family: system-ui, -apple-system, sans-serif;
         }
         
-        /* The Frosted Crystal Effect */
         .glass-panel {
             background: rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(16px);
@@ -34,7 +33,6 @@ HTML_TEMPLATE = '''
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
         
-        /* Premium Input Styling */
         .glass-input {
             background: rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -42,12 +40,11 @@ HTML_TEMPLATE = '''
         }
         .glass-input:focus {
             background: rgba(0, 0, 0, 0.4);
-            border-color: rgba(139, 92, 246, 0.5); /* Violet glow */
+            border-color: rgba(139, 92, 246, 0.5);
             box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
             outline: none;
         }
         
-        /* Vibrant Gradient Button */
         .glass-button {
             background: linear-gradient(135deg, rgba(139, 92, 246, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -58,7 +55,6 @@ HTML_TEMPLATE = '''
             box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.5);
         }
         
-        /* Selected Radio States */
         .quality-radio:checked + label {
             background: rgba(139, 92, 246, 0.15);
             border-color: rgba(139, 92, 246, 0.6);
@@ -68,11 +64,9 @@ HTML_TEMPLATE = '''
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 overflow-hidden relative">
 
-    <!-- Ambient Glowing Background Orbs -->
     <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none"></div>
     <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[120px] pointer-events-none"></div>
 
-    <!-- Main Crystal Card -->
     <div class="glass-panel w-full max-w-lg rounded-[2rem] p-8 md:p-10 relative z-10">
         <div class="text-center mb-10">
             <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-indigo-400 to-blue-400 mb-2 tracking-tight">
@@ -82,14 +76,11 @@ HTML_TEMPLATE = '''
         </div>
 
         <form action="/download" method="POST" id="dl-form" class="space-y-6">
-            
-            <!-- Link Input -->
             <div>
                 <input type="url" name="url" required placeholder="Paste YouTube link here..." 
                        class="glass-input w-full rounded-2xl px-5 py-4 text-white placeholder-gray-500 text-lg">
             </div>
 
-            <!-- Quality Selection Grid -->
             <div class="grid grid-cols-3 gap-4">
                 <div>
                     <input type="radio" name="quality" id="1080p" value="1080p" class="quality-radio hidden" checked>
@@ -114,7 +105,6 @@ HTML_TEMPLATE = '''
                 </div>
             </div>
 
-            <!-- Submit Button -->
             <button type="submit" id="submit-btn" class="glass-button w-full rounded-2xl py-4 font-bold text-white text-lg tracking-wide mt-4 flex justify-center items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -122,7 +112,6 @@ HTML_TEMPLATE = '''
                 Initialize Download
             </button>
 
-            <!-- Loading Crystal UI -->
             <div id="loader" class="hidden text-center mt-6 space-y-3">
                 <div class="inline-block w-8 h-8 border-4 border-indigo-500/30 border-t-indigo-400 rounded-full animate-spin"></div>
                 <p class="text-indigo-300 text-sm font-medium animate-pulse tracking-wide">Processing media streams...</p>
@@ -130,19 +119,16 @@ HTML_TEMPLATE = '''
         </form>
     </div>
 
-    <!-- Frontend Animation Logic -->
     <script>
         document.getElementById('dl-form').addEventListener('submit', (e) => {
             const btn = document.getElementById('submit-btn');
             const loader = document.getElementById('loader');
             
-            // visually disable button and show spinner
             btn.style.opacity = '0.4';
             btn.style.pointerEvents = 'none';
             btn.innerHTML = 'Extracting...';
             loader.classList.remove('hidden');
 
-            // Reset UI after 10 seconds to allow for future downloads
             setTimeout(() => {
                 btn.style.opacity = '1';
                 btn.style.pointerEvents = 'auto';
@@ -164,22 +150,26 @@ def download():
     video_url = request.form.get('url')
     quality = request.form.get('quality')
     
+    # Notice the new 'cookiefile': 'cookies.txt' line in each block below!
     if quality == '1080p':
         ydl_opts = {
             'format': 'bestvideo[height<=1080]+bestaudio/best',
             'merge_output_format': 'mp4',
             'outtmpl': 'downloads/%(title)s_1080p.%(ext)s',
+            'cookiefile': 'cookies.txt', 
         }
     elif quality == '720p':
         ydl_opts = {
             'format': 'bestvideo[height<=720]+bestaudio/best',
             'merge_output_format': 'mp4',
             'outtmpl': 'downloads/%(title)s_720p.%(ext)s',
+            'cookiefile': 'cookies.txt',
         }
     elif quality == 'mp3':
         ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': 'downloads/%(title)s.%(ext)s',
+            'cookiefile': 'cookies.txt',
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
